@@ -17,6 +17,9 @@ public class todoMVC_POM {
     @FindBy(css = "input[class='new-todo']")
     public WebElement inputTodo;
 
+    @FindBy(className = "todo-count")
+    public WebElement todoCount;
+
     
 
     
@@ -47,6 +50,10 @@ public class todoMVC_POM {
         inputTodo.click();
         inputTodo.sendKeys(newTodoItem);
         inputTodo.sendKeys(Keys.ENTER);
+    }
+
+    public String getTodoCount(){
+        return todoCount.getText();
     }
 
 

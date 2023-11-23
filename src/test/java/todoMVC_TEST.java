@@ -9,12 +9,16 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.TestMethodOrder;
 
 
 
 import java.io.File;
 import java.io.IOException;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class todoMVC_TEST {
 
     private static WebDriver driver;
@@ -30,21 +34,32 @@ public class todoMVC_TEST {
     @BeforeEach
     public void setupPage(){
         todo = new todoMVC_POM(driver);
+        todo.navigate();
     }
 
     @Test
-    void getTitle(){
-        todo.navigate();
+    @Order(1)
+    void getTitle() throws IOException {
         todo.reactVersion();
         assertEquals("React • TodoMVC", driver.getTitle());
+        takeScreenshot(driver, "screenshots/test.png");
     }
 
     @Test
-    void testAdd() throws IOException {
-        todo.navigate();
+    @Order(2)
+    void addItem() throws IOException {
         todo.reactVersion();
-        todo.addTodo("First Item");
-        takeScreenshot(driver, "test.png");
+        todo.addTodo("An item");
+        takeScreenshot(driver, "screenshots/addItem.png");
+    }
+
+    @Test
+    @Order(3)
+    void one_item_left_status() throws IOException {
+        todo.reactVersion();
+        todo.addTodo("First item");
+        assertEquals("1 item left", todo.getTodoCount());
+        takeScreenshot(driver, "screenshots/one_item_left_status.png");
     }
 
     @AfterAll
