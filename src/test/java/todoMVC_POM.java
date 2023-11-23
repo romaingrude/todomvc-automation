@@ -1,2 +1,49 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
 public class todoMVC_POM {
+
+    private final WebDriver driver;
+
+    @FindBy(css = "input[class='new-todo']")
+    public WebElement inputTodo;
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public todoMVC_POM(WebDriver driver){
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+
+
+    public void reactVersion(){
+        WebElement ReactLink = driver.findElement(By.linkText("React"));
+        ReactLink.click();
+    }
+
+    
+    // Navigates to the todoMVC webpage
+    public void navigate(){
+        driver.get("https://todomvc.com/");
+    }
+
+
+    public void addTodo(String newTodoItem){
+        inputTodo.click();
+        inputTodo.sendKeys(newTodoItem);
+        inputTodo.sendKeys(Keys.ENTER);
+    }
+
+
 }
