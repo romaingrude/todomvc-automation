@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -44,6 +45,9 @@ public class todoMVC_TEST {
         driver.quit();
     }
 
+
+    @RegisterExtension
+    ScreenshotWatcher watcher = new ScreenshotWatcher(driver, "failed_screenshots");
 
     @Test
     @Order(1)
@@ -104,7 +108,7 @@ public class todoMVC_TEST {
 
     @Test
     @Order(7)
-    void delete_item() throws IOException, InterruptedException {
+    void delete_item() throws IOException {
         todo.addTodo("First item");
         todo.addTodo("Second item");
         todo.addTodo("Third item");
@@ -112,6 +116,15 @@ public class todoMVC_TEST {
         assertEquals("2 items left", todo.getTodoCount());
         assertEquals("Third item", todo.itemName(2));
         takeScreenshot(driver, "screenshots/delete_second_item.png");
+    }
+
+    @Test
+    @Order(8)
+    void check_footer_exists(){
+        todo.addTodo("First item");
+        assertTrue(todo.isFooterDisplayed());
+        todo.deleteItem(1);
+        assertFalse(todo.isFooterDisplayed());
     }
 
 

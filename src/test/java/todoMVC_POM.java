@@ -18,12 +18,15 @@ public class todoMVC_POM {
     @FindBy(className = "todo-count")
     public WebElement todoCount;
 
+//    @FindBy(className = "footer")
+//    public WebElement footer;
+
     
     
     public todoMVC_POM(WebDriver driver){
         this.driver = driver;
         PageFactory.initElements(driver, this);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(2));
     }
 
 
@@ -56,14 +59,14 @@ public class todoMVC_POM {
     }
 
 
-    // Clicks the toggle button to mark item as conmpleted
+    // Clicks the toggle button to mark item as completed
     public void markItemAsCompleted(int item_number){
         String locator = "li:nth-child(" + item_number + ") .toggle";
        WebElement markComplete = driver.findElement(By.cssSelector(locator));
        markComplete.click();
     }
 
-    public void deleteItem(int item_number) throws InterruptedException {
+    public void deleteItem(int item_number) {
         WebElement hover = driver.findElement(By.cssSelector("li:nth-child(" + item_number + ") .view"));
         // Creates action to be able to hover over the element
         Actions actions = new Actions(driver);
@@ -81,6 +84,15 @@ public class todoMVC_POM {
     public void clearLocalStorage(){
         JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
         jsExecutor.executeScript("window.localStorage.clear();");
+    }
+
+    public Boolean isFooterDisplayed(){
+        try {
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("footer[class='footer']")));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
+        }
     }
 
 
