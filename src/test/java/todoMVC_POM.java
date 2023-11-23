@@ -6,6 +6,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 public class todoMVC_POM {
 
@@ -18,9 +19,20 @@ public class todoMVC_POM {
     @FindBy(className = "todo-count")
     public WebElement todoCount;
 
-//    @FindBy(className = "footer")
-//    public WebElement footer;
+    @FindBy(xpath = "//a[@href='#/']")
+    public WebElement statusAll;
 
+    @FindBy(xpath = "//a[@href='#/active']")
+    public WebElement statusActive;
+
+    @FindBy(xpath = "//a[@href='#/completed']")
+    public WebElement statusCompleted;
+
+    @FindBy(className = "clear-completed")
+    public WebElement clearCompletedButton;
+
+    @FindBy(xpath = "//label[@for='toggle-all']")
+    public WebElement toggleAllButton;
     
     
     public todoMVC_POM(WebDriver driver){
@@ -60,7 +72,7 @@ public class todoMVC_POM {
 
 
     // Clicks the toggle button to mark item as completed
-    public void markItemAsCompleted(int item_number){
+    public void toggleItem(int item_number){
         String locator = "li:nth-child(" + item_number + ") .toggle";
        WebElement markComplete = driver.findElement(By.cssSelector(locator));
        markComplete.click();
@@ -75,10 +87,14 @@ public class todoMVC_POM {
         deleteButton.click();
     }
 
-    public String itemName(int item_number){
-        String locator = "li:nth-child(" + item_number + ") .view";
-        WebElement itemName = wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.cssSelector(locator))));
-        return itemName.getText();
+    public Object itemName(int item_number){
+        try {
+            String locator = "li:nth-child(" + item_number + ") .view";
+            WebElement itemName = wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.cssSelector(locator))));
+            return itemName.getText();
+        } catch (Exception e){
+            return null;
+        }
     }
 
     public void clearLocalStorage(){
@@ -86,14 +102,19 @@ public class todoMVC_POM {
         jsExecutor.executeScript("window.localStorage.clear();");
     }
 
-    public Boolean isFooterDisplayed(){
-        try {
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("footer[class='footer']")));
-            return true;
-        } catch (TimeoutException e) {
-            return false;
-        }
+
+    public boolean isFooterDisplayed() {
+        List<WebElement> footerElements = driver.findElements(By.cssSelector("footer[class='footer']"));
+        // If the list is not empty, the element exists
+        return !footerElements.isEmpty();
     }
+
+    public boolean isClearCompleteDisplayed(){
+        List<WebElement> clearCompletedButton = driver.findElements(By.className("clear-completed"));
+        return !clearCompletedButton.isEmpty();
+    }
+
+
 
 
 }
