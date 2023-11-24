@@ -80,6 +80,7 @@ public class todoMVC_POM {
         String locator = "li:nth-child(" + item_number + ") .toggle";
        WebElement markComplete = driver.findElement(By.cssSelector(locator));
        markComplete.click();
+       driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
     }
 
     public void deleteItem(int item_number) {
