@@ -1,21 +1,16 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.safari.SafariDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class todoMVC_TEST {
@@ -26,10 +21,31 @@ public class todoMVC_TEST {
 
 
     @BeforeAll
-    public static void launchBrowser(){
-        WebDriverManager.firefoxdriver().setup();
-        driver = new FirefoxDriver();
+    public static void createDriver() {
+        final String browser = System.getProperty("browser", "chrome").toLowerCase();
+
+        switch (browser) {
+            case "chrome":
+                WebDriverManager.chromedriver().setup();
+                driver = new ChromeDriver();
+                break;
+
+            case "firefox":
+                WebDriverManager.firefoxdriver().setup();
+                driver = new FirefoxDriver();
+                break;
+
+            case "safari":
+                WebDriverManager.safaridriver().setup();
+                driver = new SafariDriver();
+                driver.manage().window().maximize();
+                break;
+
+            default:
+                throw new RuntimeException("Invalid browser specified!");
+        }
     }
+
 
     @BeforeEach
     public void setupPage() throws InterruptedException {
@@ -39,15 +55,14 @@ public class todoMVC_TEST {
     }
 
     @AfterEach
-    public void clearBrowserStorage(){
+    public void clearBrowserStorage() {
         todo.clearLocalStorage();
     }
 
     @AfterAll
-    public static void closeBrowser(){
+    public static void closeBrowser() {
         driver.quit();
     }
-
 
     @RegisterExtension
     ScreenshotWatcher watcher = new ScreenshotWatcher(driver, "failed_screenshots");
@@ -265,10 +280,24 @@ public class todoMVC_TEST {
     @Test
     @Order(21)
     void emoji_allowed() throws IOException {
-        todo.addTodo("\uD83D\uDE0A");
+        todo.inputTodo.click();
+        sendKeysWithEmojis(todo.inputTodo, "\uD83D\uDE0A");
+        todo.inputTodo.sendKeys(Keys.ENTER);
         assertEquals("\uD83D\uDE0A", todo.itemName(1));
         takeScreenshot(driver, "emoji_characters.png");
+    }
 
+    // Helper method to send emojis to an input field
+    private void sendKeysWithEmojis(WebElement element, String text) {
+        String script = "var elm = arguments[0], "
+                + "    txt = arguments[1];"
+                + "elm.value += txt;"
+                + "elm.dispatchEvent(new Event('keydown', {bubbles: true}));"
+                + "elm.dispatchEvent(new Event('keypress', {bubbles: true}));"
+                + "elm.dispatchEvent(new Event('input', {bubbles: true}));"
+                + "elm.dispatchEvent(new Event('keyup', {bubbles: true}));";
+
+        ((JavascriptExecutor) driver).executeScript(script, element, text);
     }
 
     @Test
@@ -292,7 +321,6 @@ public class todoMVC_TEST {
         }
         return stringBuilder.toString();
     }
-
     public void takeScreenshot(WebDriver driver, String path) throws IOException {
         File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         File DestFile = new File(path);

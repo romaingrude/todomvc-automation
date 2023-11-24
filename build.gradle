@@ -32,4 +32,7 @@ dependencies {
 }
 
 test {
-useJUnitPlatform()}
+useJUnitPlatform()
+  systemProperties = System.getProperties()
+  maxParallelForks = 3
+}

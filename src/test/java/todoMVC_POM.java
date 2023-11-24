@@ -47,6 +47,7 @@ public class todoMVC_POM {
     public void reactVersion() throws InterruptedException {
         WebElement ReactLink = wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.linkText("React"))));
         ReactLink.click();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
         wait.until(ExpectedConditions.titleIs("React • TodoMVC"));
     }
 
