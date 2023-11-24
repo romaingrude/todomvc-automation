@@ -47,14 +47,15 @@ public class todoMVC_POM {
     public void reactVersion() throws InterruptedException {
         WebElement ReactLink = wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.linkText("React"))));
         ReactLink.click();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
         wait.until(ExpectedConditions.titleIs("React • TodoMVC"));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
     }
 
     
     // Navigates to the todoMVC webpage
     public void navigate(){
         driver.get("https://todomvc.com/");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
     }
 
 
@@ -64,6 +65,7 @@ public class todoMVC_POM {
         inputTodo.click();
         inputTodo.sendKeys(newTodoItem);
         inputTodo.sendKeys(Keys.ENTER);
+        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
     }
 
 

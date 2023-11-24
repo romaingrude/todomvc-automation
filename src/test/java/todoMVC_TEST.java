@@ -22,7 +22,7 @@ public class todoMVC_TEST {
 
     @BeforeAll
     public static void createDriver() {
-        final String browser = System.getProperty("browser", "chrome").toLowerCase();
+        final String browser = System.getProperty("browser").toLowerCase();
 
         switch (browser) {
             case "chrome":
