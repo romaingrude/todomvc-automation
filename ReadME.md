@@ -6,6 +6,8 @@ The test suite is configured to run seamlessly across Safari, Chrome, and Firefo
 
 This parallel execution capability optimizes the testing process, allowing multiple test scenarios to be executed concurrently across different browsers. The combination of browser compatibility testing and parallel execution ensures a robust and efficient testing environment for the test suite.
 
+Page Object Model and Page Factory techniques have been used to render the test suite more flexible for future test against different frameworks or browsers.
+
 
 
 
