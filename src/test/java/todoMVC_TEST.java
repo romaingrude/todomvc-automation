@@ -21,31 +21,15 @@ public class todoMVC_TEST {
 
 
     @BeforeAll
-    public static void createDriver() {
-        final String browser = System.getProperty("browser", "chrome").toLowerCase();
-    
-        switch (browser) {
-            case "chrome":
-                WebDriverManager.chromedriver().setup();
-                ChromeOptions chromeOptions = new ChromeOptions();
-                if (System.getenv("CI") != null) {
-                    chromeOptions.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
-                }
-                driver = new ChromeDriver(chromeOptions);
-                break;
-    
-            case "firefox":
-                WebDriverManager.firefoxdriver().setup();
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                if (System.getenv("CI") != null) {
-                    firefoxOptions.addArguments("-headless");
-                }
-                driver = new FirefoxDriver(firefoxOptions);
-                break;
-    
-            default:
-                throw new RuntimeException("Invalid browser specified!");
-        }
+    public static void launchBrowser() {
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--remote-debugging-pipe");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.addArguments("--disable-gpu");
+        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--headless");
+        driver = new ChromeDriver(chromeOptions);
     }
 
 
