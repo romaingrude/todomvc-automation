@@ -29,7 +29,7 @@ public class todoMVC_TEST {
         switch (browser) {
             case "chrome":
                 ChromeOptions optionsC = new ChromeOptions();
-                optionsC.addArguments("--disable-gpu");
+                optionsC.addArguments("--headless");
                 WebDriverManager.chromedriver().setup();
                 driver = new ChromeDriver(optionsC);
                 break;
