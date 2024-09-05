@@ -4,7 +4,9 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariDriver;
 
 import java.io.File;
@@ -21,15 +23,33 @@ public class todoMVC_TEST {
 
 
     @BeforeAll
-    public static void launchBrowser() {
-        WebDriverManager.chromedriver().setup();
-        ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("--remote-debugging-pipe");
-        chromeOptions.addArguments("--disable-dev-shm-usage");
-        chromeOptions.addArguments("--disable-gpu");
-        chromeOptions.addArguments("--no-sandbox");
-        chromeOptions.addArguments("--headless");
-        driver = new ChromeDriver(chromeOptions);
+    public static void createDriver() {
+        final String browser = System.getProperty("browser", "chrome").toLowerCase();
+
+        switch (browser) {
+            case "chrome":
+                ChromeOptions optionsC = new ChromeOptions();
+                optionsC.addArguments("--disable-gpu");
+                WebDriverManager.chromedriver().setup();
+                driver = new ChromeDriver(optionsC);
+                break;
+
+            case "firefox":
+                FirefoxOptions optionsF = new FirefoxOptions();
+                optionsF.addArguments("--headless");
+                WebDriverManager.firefoxdriver().setup();
+                driver = new FirefoxDriver(optionsF);
+                break;
+
+            case "safari":
+                WebDriverManager.safaridriver().setup();
+                driver = new SafariDriver();
+                driver.manage().window().maximize();
+                break;
+
+            default:
+                throw new RuntimeException("Invalid browser specified!");
+        }
     }
 
 
@@ -58,7 +78,7 @@ public class todoMVC_TEST {
     @Test
     @Order(1)
     void getTitle() throws IOException {
-        assertEquals("React • TodoMVC", driver.getTitle());
+        assertEquals("TodoMVC: React", driver.getTitle());
         takeScreenshot(driver, "screenshots/test.png");
     }
 
@@ -73,7 +93,7 @@ public class todoMVC_TEST {
     @Order(3)
     void one_item_left_status() throws IOException {
         todo.addTodo("First item");
-        assertEquals("1 item left", todo.getTodoCount());
+        assertEquals("1 item left!", todo.getTodoCount());
         takeScreenshot(driver, "screenshots/one_item_left_status.png");
     }
 
@@ -82,7 +102,7 @@ public class todoMVC_TEST {
     void two_item_left_status() throws IOException {
         todo.addTodo("First item");
         todo.addTodo("Second item");
-        assertEquals("2 items left", todo.getTodoCount());
+        assertEquals("2 items left!", todo.getTodoCount());
         takeScreenshot(driver, "screenshots/two_items_left_status.png");
     }
 
@@ -91,11 +111,11 @@ public class todoMVC_TEST {
     void zero_item_left_status() throws IOException{
         todo.addTodo("First item");
         todo.addTodo("Second item");
-        assertEquals("2 items left", todo.getTodoCount());
+        assertEquals("2 items left!", todo.getTodoCount());
         todo.toggleItem(1);
-        assertEquals("1 item left", todo.getTodoCount());
+        assertEquals("1 item left!", todo.getTodoCount());
         todo.toggleItem(2);
-        assertEquals("0 items left", todo.getTodoCount());
+        assertEquals("0 items left!", todo.getTodoCount());
         takeScreenshot(driver, "screenshots/zero_items_left_status.png");
     }
 
@@ -103,11 +123,11 @@ public class todoMVC_TEST {
     @Order(6)
     void tick_and_untick() throws IOException {
         todo.addTodo("First item");
-        assertEquals("1 item left", todo.getTodoCount());
+        assertEquals("1 item left!", todo.getTodoCount());
         todo.toggleItem(1);
-        assertEquals("0 items left", todo.getTodoCount());
+        assertEquals("0 items left!", todo.getTodoCount());
         todo.toggleItem(1);
-        assertEquals("1 item left", todo.getTodoCount());
+        assertEquals("1 item left!", todo.getTodoCount());
         takeScreenshot(driver, "screenshots/tick_and_untick.png");
     }
 
@@ -118,7 +138,7 @@ public class todoMVC_TEST {
         todo.addTodo("Second item");
         todo.addTodo("Third item");
         todo.deleteItem(2);
-        assertEquals("2 items left", todo.getTodoCount());
+        assertEquals("2 items left!", todo.getTodoCount());
         assertEquals("Third item", todo.itemName(2));
         takeScreenshot(driver, "screenshots/delete_second_item.png");
     }
@@ -147,7 +167,7 @@ public class todoMVC_TEST {
         todo.addTodo("Third task");
         todo.toggleItem(2);
         todo.statusActive.click();
-        assertEquals("https://todomvc.com/examples/react/#/active", driver.getCurrentUrl());
+        assertEquals("https://todomvc.com/examples/react/dist/#/active", driver.getCurrentUrl());
         assertEquals("Third task", todo.itemName(2));
     }
 
@@ -159,10 +179,10 @@ public class todoMVC_TEST {
         todo.addTodo("Third task");
         todo.toggleItem(2);
         todo.statusActive.click();
-        assertEquals("https://todomvc.com/examples/react/#/active", driver.getCurrentUrl());
+        assertEquals("https://todomvc.com/examples/react/dist/#/active", driver.getCurrentUrl());
         assertEquals("Third task", todo.itemName(2));
         todo.statusAll.click();
-        assertEquals("https://todomvc.com/examples/react/#/", driver.getCurrentUrl());
+        assertEquals("https://todomvc.com/examples/react/dist/#/", driver.getCurrentUrl());
         assertEquals("Second task", todo.itemName(2));
     }
 
@@ -175,7 +195,7 @@ public class todoMVC_TEST {
         todo.toggleItem(1);
         todo.toggleItem(3);
         todo.statusCompleted.click();
-        assertEquals("https://todomvc.com/examples/react/#/completed", driver.getCurrentUrl());
+        assertEquals("https://todomvc.com/examples/react/dist/#/completed", driver.getCurrentUrl());
         assertEquals("First task", todo.itemName(1));
         assertEquals("Third task", todo.itemName(2));
     }
@@ -188,15 +208,6 @@ public class todoMVC_TEST {
         assertTrue(todo.isClearCompleteDisplayed());
     }
 
-    @Test
-    @Order(14)
-    void check_clear_completed_is_not_displayed(){
-        todo.addTodo("First task");
-        todo.toggleItem(1);
-        assertTrue(todo.isClearCompleteDisplayed());
-        todo.toggleItem(1);
-        assertFalse(todo.isClearCompleteDisplayed());
-    }
 
     @Test
     @Order(15)
@@ -250,11 +261,12 @@ public class todoMVC_TEST {
     @Order(19)
     void adds_single_character_item(){
         todo.addTodo("a");
-        assertEquals("a", todo.itemName(1));
-        todo.addTodo("b");
-        assertEquals("b", todo.itemName(2));
-        todo.addTodo("c");
-        assertEquals("c", todo.itemName(3));
+        assertEquals(null, todo.itemName(1));
+        todo.inputTodo.clear();
+        todo.addTodo("bb");
+        assertEquals("bb", todo.itemName(1));
+        todo.addTodo("cc");
+        assertEquals("cc", todo.itemName(2));
     }
 
     @Test

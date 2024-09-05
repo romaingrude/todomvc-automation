@@ -31,10 +31,13 @@ public class todoMVC_POM {
     @FindBy(className = "clear-completed")
     public WebElement clearCompletedButton;
 
-    @FindBy(xpath = "//label[@for='toggle-all']")
+    @FindBy(css = "input.toggle-all")
     public WebElement toggleAllButton;
-    
-    
+
+    @FindBy(xpath = "//*[text() = 'React']")
+    public WebElement reactLink;
+
+
     public todoMVC_POM(WebDriver driver){
         this.driver = driver;
         PageFactory.initElements(driver, this);
@@ -45,9 +48,9 @@ public class todoMVC_POM {
 
     // Clicks the React version
     public void reactVersion() throws InterruptedException {
-        WebElement ReactLink = wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.linkText("React"))));
-        ReactLink.click();
-        wait.until(ExpectedConditions.titleIs("React • TodoMVC"));
+        wait.until(ExpectedConditions.elementToBeClickable(reactLink));
+        reactLink.click();
+        wait.until(ExpectedConditions.titleIs("TodoMVC: React"));
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1));
     }
 
