@@ -87,7 +87,7 @@ public class todoMVC_TEST {
     void addItem() throws IOException {
         todo.addTodo("An item");
         takeScreenshot(driver, "screenshots/addItem.png");
-        assertEquals("An error", todo.itemName(1));
+        assertEquals("An item", todo.itemName(1));
     }
 
     @Test
