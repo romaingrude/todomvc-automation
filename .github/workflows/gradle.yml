@@ -8,7 +8,6 @@ on:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,8 +20,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
@@ -38,7 +35,6 @@ jobs:
           **/build/reports/
           **/build/test-results/
 
-
   automated-api-tests:
     runs-on: ubuntu-latest
     steps:
@@ -48,6 +44,11 @@ jobs:
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-      - name: Run API tests
+      - name: Run API tests and export results
         run: |
-          postman collection run "31611889-68f7600e-2d37-4575-a01f-4160cedf058e"
+          postman collection run "31611889-68f7600e-2d37-4575-a01f-4160cedf058e" --reporters cli,json --reporter-json-export result.json
+      - name: Upload API test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: postman-results
+          path: result.json
