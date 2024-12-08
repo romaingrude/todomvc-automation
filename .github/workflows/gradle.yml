@@ -1,78 +1,40 @@
-name: Java CI with Gradle
-
-on:
-  workflow_dispatch:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
+name: Run tests and publish report
+on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+      - uses: actions/checkout@v3
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 17
 
-    - name: Run Tests
-      run: ./gradlew clean test
+      - name: Run tests
+        run: ./gradlew clean test
 
-    - name: Store reports
-      if: failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: reports
-        path: |
-          **/build/reports/
-          **/build/test-results/
-          
-    - name: Load test report history
-      uses: actions/checkout@v3
-      if: always()
-      continue-on-error: true
-      with:
+      - name: Load test report history
+        uses: actions/checkout@v3
+        if: always()
+        continue-on-error: true
+        with:
           ref: gh-pages
           path: gh-pages
 
-    - name: Build test report
-      uses: simple-elf/allure-report-action@v1.7
-      if: always()
-      with:
-        gh_pages: gh-pages
-        allure_history: allure-history
-        allure_results: build/allure-results
-
-    - name: Publish test report
-      uses: peaceiris/actions-gh-pages@v3
-      if: always()
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: gh-pages
-        publish_dir: allure-history
-
-  automated-api-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Newman and htmlextra
-        run: |
-          npm install -g newman
-          npm install -g newman-reporter-htmlextra
-      - name: Run API tests with htmlextra reporter
-        run: |
-          newman run "https://api.getpostman.com/collections/31611889-68f7600e-2d37-4575-a01f-4160cedf058e?apikey=${{ secrets.POSTMAN_API_KEY }}" --reporters cli,htmlextra --reporter-htmlextra-export html-report.html
-      - name: Preview HTML Report
-        uses: actions/upload-artifact@v3
+      - name: Build test report
+        uses: simple-elf/allure-report-action@v1.7
+        if: always()
         with:
-          name: postman-html-report
-          path: html-report.html
+          gh_pages: gh-pages
+          allure_history: allure-history
+          allure_results: build/allure-results
+
+      - name: Publish test report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
