@@ -1,6 +1,6 @@
 plugins {
   id 'java'
-  id 'io.qameta.allure' version '2.9.3'
+  id 'io.qameta.allure' version '2.8.1'
 }
 
 group 'com.example'
@@ -11,16 +11,7 @@ repositories {
 }
 
 ext {
-  allureVersion = '2.24.0'
   junitVersion = '5.9.3'
-}
-allure {
-  autoconfigure = true
-  version = "${allureVersion}"
-
-  useJUnit5 {
-    version = "${allureVersion}"
-  }
 }
 
 sourceCompatibility = '17'
@@ -39,6 +30,9 @@ dependencies {
 
   // Add dependencies for WebDriverManager and ChromeDriver
   testImplementation 'io.github.bonigarcia:webdrivermanager:5.6.1'
+
+  // https://mvnrepository.com/artifact/io.qameta.allure/allure-junit5
+  testImplementation group: 'io.qameta.allure', name: 'allure-junit5', version: '2.28.1'
 }
 
 test {
