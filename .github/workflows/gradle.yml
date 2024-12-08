@@ -34,6 +34,7 @@ jobs:
         uses: actions/checkout@v4
         if: always()
         with:
+          continue on error: true
           ref: gh-pages
           path: gh-pages
           persist-credentials: false
@@ -42,6 +43,7 @@ jobs:
         uses: simple-elf/allure-report-action@v1.7
         if: always()
         with:
+          continue on error: true
           gh_pages: gh-pages
           allure_history: allure-history
           allure_results: build/allure-results
