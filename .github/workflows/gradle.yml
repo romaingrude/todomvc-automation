@@ -7,7 +7,7 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: zulu
           java-version: 17
@@ -16,12 +16,13 @@ jobs:
         run: ./gradlew clean test
 
       - name: Load test report history
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: always()
         continue-on-error: true
         with:
           ref: gh-pages
           path: gh-pages
+          persist-credentials: false
 
       - name: Build test report
         uses: simple-elf/allure-report-action@v1.7
