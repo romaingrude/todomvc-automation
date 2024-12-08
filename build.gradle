@@ -1,6 +1,6 @@
 plugins {
   id 'java'
-  id 'io.qameta.allure' version '2.8.1'
+  id 'io.qameta.allure' version '2.9.3'
 }
 
 group 'com.example'
@@ -11,7 +11,16 @@ repositories {
 }
 
 ext {
+  allureVersion = '2.24.0'
   junitVersion = '5.9.3'
+}
+allure {
+  autoconfigure = true
+  version = "${allureVersion}"
+
+  useJUnit5 {
+    version = "${allureVersion}"
+  }
 }
 
 sourceCompatibility = '17'
