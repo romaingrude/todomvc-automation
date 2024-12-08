@@ -1,11 +1,5 @@
 name: Run tests and publish report
-on:
-  workflow_dispatch:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-    
+on: [push] 
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -33,8 +27,8 @@ jobs:
       - name: Load test report history
         uses: actions/checkout@v4
         if: always()
+        continue-on-error: true
         with:
-          continue on error: true
           ref: gh-pages
           path: gh-pages
           persist-credentials: false
@@ -43,7 +37,6 @@ jobs:
         uses: simple-elf/allure-report-action@v1.7
         if: always()
         with:
-          continue on error: true
           gh_pages: gh-pages
           allure_history: allure-history
           allure_results: build/allure-results
