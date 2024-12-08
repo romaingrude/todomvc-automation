@@ -14,3 +14,5 @@ This project incorporates a robust Continuous Integration (CI) pipeline utilizin
 
 In the event of any test failures, detailed test reports and logs are generated and archived for easy access and review. This CI process helps maintain the integrity of the test suite, verifying that new changes do not introduce regressions or compromise the functionality of the application under test. By automating this testing process, the workflow ensures fast feedback for developers and contributes to a continuous delivery pipeline that is both efficient and reliable.
 
+
+Added Allure Report with access with Github Pages
