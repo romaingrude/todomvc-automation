@@ -1,5 +1,11 @@
 name: Run tests and publish report
-on: [push]
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,6 +20,15 @@ jobs:
 
       - name: Run tests
         run: ./gradlew clean test
+
+      - name: Store reports
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: |
+            **/build/reports/
+            **/build/test-results/
 
       - name: Load test report history
         uses: actions/checkout@v4
@@ -39,3 +54,22 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: allure-history
+
+  automated-api-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Newman and htmlextra
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+      - name: Run API tests with htmlextra reporter
+        run: |
+          newman run "https://api.getpostman.com/collections/31611889-68f7600e-2d37-4575-a01f-4160cedf058e?apikey=${{ secrets.POSTMAN_API_KEY }}" --reporters cli,htmlextra --reporter-htmlextra-export html-report.html
+      - name: Preview HTML Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: postman-html-report
+          path: html-report.html
+
+        
